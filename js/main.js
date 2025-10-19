@@ -1,6 +1,46 @@
-// ARQUIVO: js/main.js (COMPLETO PARA ATIVIDADE 3)
+// ARQUIVO: js/main.js (COMPLETO E MODIFICADO)
 
+// --- INICIALIZAÇÃO DO MODO DE ACESSIBILIDADE ---
+// Roda IMEDIATAMENTE (IIFE) para evitar "flicker" de tema
+(function() {
+    // 1. Verifica preferência salva no localStorage
+    const preferencia = localStorage.getItem('theme');
+    if (preferencia === 'dark-mode') {
+        document.body.classList.add('dark-mode');
+    }
+})();
+// --- FIM DA SEÇÃO DE ACESSIBILIDADE ---
+
+
+// CÓDIGO ORIGINAL DO PROJETO (com a adição do listener do botão)
 document.addEventListener('DOMContentLoaded', () => {
+
+    // --- ADICIONADO: INICIALIZA O BOTÃO DE ACESSIBILIDADE ---
+    // (A função IIFE acima já aplicou o tema, aqui só adicionamos o clique)
+    function inicializarToggleAcessibilidade() {
+        const toggleBtn = document.getElementById('accessibility-toggle-btn');
+        
+        // Verifica se o botão existe e se já não tem um listener
+        if (toggleBtn && !toggleBtn.dataset.listenerAtivo) {
+            toggleBtn.dataset.listenerAtivo = 'true'; // Marca que o listener foi adicionado
+            toggleBtn.addEventListener('click', () => {
+                const isDarkMode = document.body.classList.toggle('dark-mode');
+                
+                // Salva a preferência
+                if (isDarkMode) {
+                    localStorage.setItem('theme', 'dark-mode');
+                } else {
+                    localStorage.setItem('theme', 'light-mode');
+                }
+            });
+        }
+    }
+    // Chama a função na carga inicial
+    inicializarToggleAcessibilidade();
+    // NOTA: Como o SPA do seu código *NÃO* recarrega o header,
+    // não precisamos chamar essa função de novo dentro do `carregarPagina`.
+    // --- FIM DA ADIÇÃO DE ACESSIBILIDADE ---
+
 
     // --- VALIDAÇÃO DO FORMULÁRIO (AGORA DENTRO DE UMA FUNÇÃO) ---
     function inicializarValidacaoFormulario() {
@@ -279,7 +319,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- FIM DOS TEMPLATES ---
 
 
-// --- INICIALIZAÇÃO ---
+    // --- INICIALIZAÇÃO ---
     // Verifica qual página carregou inicialmente e roda as funções apropriadas
     // Usamos endsWith para funcionar mesmo se estiver em subdiretório
     const currentPagePath = window.location.pathname;
@@ -288,7 +328,7 @@ document.addEventListener('DOMContentLoaded', () => {
         inicializarValidacaoFormulario();
     } else if (currentPagePath.endsWith('/projetos.html') || currentPagePath.endsWith('projetos.html')) {
         carregarProjetosComTemplate();
-    } else if (currentPagePath.endsWith('/') || currentPagePath.endsWith('/index.html') || currentPagePath.endsWith('index.html')) {
+    } else if (currentPagePath.endsWith('/') || currentPagePath.endsWith('/index.html') || currentPagePath.endsWith('index.html') || currentPagePath === '') {
         // Nenhuma inicialização específica necessária para index.html no seu código atual
         // console.log("Carregou Index");
     }
